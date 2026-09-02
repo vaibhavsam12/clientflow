@@ -1,0 +1,15 @@
+{
+  "name": "clientflow-platform",
+  "version": "1.0.0",
+  "description": "ClientFlow - Enterprise Client & Project Operations Platform",
+  "scripts": {
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build": "npm --prefix backend run build && npm --prefix frontend run build",
+    "test": "npm --prefix backend run test && npm --prefix frontend run test",
+    "prisma:seed": "npm --prefix backend run prisma:seed"
+  },
+  "keywords": ["saas", "b2b", "react", "nodejs", "prisma", "typescript", "operations", "kanban"],
+  "author": "ClientFlow Engineering Team",
+  "license": "MIT"
+}
