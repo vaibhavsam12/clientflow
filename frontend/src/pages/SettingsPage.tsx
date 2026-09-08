@@ -86,7 +86,7 @@ export const SettingsPage: React.FC = () => {
                 </div>
                 <div>
                   <span className="font-bold text-slate-900 block text-sm">Database & ORM</span>
-                  <span className="text-slate-500 mt-0.5 block">PostgreSQL 16 engine with Prisma ORM and 10 relational entities.</span>
+                  <span className="text-slate-500 mt-0.5 block">Prisma ORM with 10 relational entities (SQLite local development, PostgreSQL-compatible).</span>
                 </div>
               </div>
 

@@ -1,7 +1,7 @@
 # CLIENTFLOW — System Architecture & Engineering Design
 
 ## 1. Overview
-CLIENTFLOW is an enterprise-grade B2B Client and Project Operations SaaS platform. It coordinates multi-client engagements, project lifecycle pipelines, task distribution workflows, document asset management, organization audit logging, and team velocity analytics.
+CLIENTFLOW is an enterprise client and project operations platform. It coordinates multi-client engagements, project lifecycle pipelines, task distribution workflows, document asset management, organization audit logging, and team velocity analytics.
 
 ---
 
@@ -31,7 +31,7 @@ graph TB
     ValMw["Zod Validation Middleware"]
     Ctrl["Controllers Layer"]
     Svc["Services Business Logic"]
-    Storage["Storage Service Abstraction (Local / S3)"]
+    Storage["Storage Service Abstraction (LocalStorageService)"]
     Prisma["Prisma ORM Client"]
     Err["Centralized AppError Handler"]
 
@@ -43,8 +43,8 @@ graph TB
   end
 
   subgraph Persistence ["Persistence Layer"]
-    DB[("PostgreSQL 16 Engine")]
-    Disk[("Local Storage / S3 Bucket")]
+    DB[("Relational Database (SQLite / PostgreSQL)")]
+    Disk[("Local Filesystem Storage (/uploads)")]
   end
 
   Ax -->|HTTP / REST + JWT| Nginx
@@ -82,7 +82,7 @@ erDiagram
 
 ### Relational Entities:
 - **`User`**: Core identity model with unique email, bcrypt hash, role (`ADMIN`, `MANAGER`, `MEMBER`), and avatar url.
-- **`RefreshToken`**: Session tracking table with UUID token hashes, expiration timestamps, and revocation timestamps enabling single-device logout or full-session revocation.
+- **`RefreshToken`**: Session tracking table with token hashes, expiration timestamps, and revocation timestamps enabling single-device logout or full-session revocation.
 - **`Client`**: Enterprise client account with status (`LEAD`, `ACTIVE`, `ON_HOLD`, `COMPLETED`, `ARCHIVED`), notes, company, and contact metadata.
 - **`ClientContact`**: Specific stakeholders per client account, designated with primary flags, title, email, and phone.
 - **`Project`**: Engagements linked to a client with status (`PLANNING`, `ACTIVE`, `ON_HOLD`, `COMPLETED`, `ARCHIVED`), priority (`LOW`, `MEDIUM`, `HIGH`, `URGENT`), target deadlines, and budgets.
@@ -109,12 +109,33 @@ erDiagram
 3. **Security Defenses**:
    - `Helmet`: HTTP security headers (XSS filtering, frameguard, CSP policies).
    - `CORS`: Origin whitelisting with credential support.
-   - `Zod Validation`: Strict input sanitization preventing injection attacks.
+   - `Zod Validation`: Strict request payload sanitization preventing injection attacks.
 
 ---
 
 ## 5. Storage Abstraction Layer
 
 - Interface `IStorageService` decouples storage implementation from business controllers.
-- `LocalStorageService`: Writes to local file system disk with UUID-based filenames to prevent path traversal attacks.
-- Direct pathway to configure AWS S3 / MinIO via `S3StorageService` without modifying application route logic.
+- `LocalStorageService`: Writes to local file system disk (`./uploads`) with UUID-based filenames to prevent path traversal and collision attacks.
+- Extensible interface designed to enable cloud object storage (e.g. S3 / MinIO) without changing route or controller contracts.
+
+---
+
+## 6. Testing & Quality Assurance Architecture
+
+- **Test Framework**: Vitest test runner with Supertest for API integration testing.
+- **Integration Coverage**:
+  - Authentication flows (registration, duplicate validation, login, token refresh, logout revocation).
+  - RBAC authorization matrix (verifying 403 Forbidden on unpermitted operations).
+  - Business operations (Client, Project, Task Kanban lifecycle, Audit logging).
+- **Frontend Verification**:
+  - Component formatter and badge utility tests.
+  - Strict TypeScript compiler (`tsc --noEmit`) checking across both client and server codebases.
+
+---
+
+## 7. Containerization & Deployment
+
+- **Backend Container**: Multi-stage Docker build (`node:22-alpine`) compiling TypeScript to JavaScript and running production dependencies with Prisma Client.
+- **Frontend Container**: Multi-stage Docker build compiling the Vite React application and serving production static assets via an Alpine Nginx reverse proxy.
+- **Orchestration**: `docker-compose.yml` coordinates backend, frontend, and database services with isolated networking and persistent volume management.

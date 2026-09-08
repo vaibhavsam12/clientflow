@@ -9,8 +9,8 @@ export const config = {
   isProduction: process.env.NODE_ENV === 'production',
   databaseUrl: process.env.DATABASE_URL || 'file:./dev.db',
   jwt: {
-    accessSecret: process.env.JWT_ACCESS_SECRET || 'clientflow_jwt_access_secret_production_ready_key_9988776655',
-    refreshSecret: process.env.JWT_REFRESH_SECRET || 'clientflow_jwt_refresh_secret_production_ready_key_1122334455',
+    accessSecret: process.env.JWT_ACCESS_SECRET || 'dev_jwt_access_secret_for_local_testing_only',
+    refreshSecret: process.env.JWT_REFRESH_SECRET || 'dev_jwt_refresh_secret_for_local_testing_only',
     accessExpiresIn: process.env.JWT_ACCESS_EXPIRES_IN || '15m',
     refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
     refreshExpiresInDays: 7,
