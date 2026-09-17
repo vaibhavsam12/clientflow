@@ -51,8 +51,13 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   return (
     <ToastContext.Provider value={{ toast, success, error, info, warning }}>
       {children}
-      {/* Toast Render Container */}
-      <div className="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-md w-full pointer-events-none px-4 sm:px-0">
+      {/* Toast Render Container with ARIA Live Region for Screen Readers */}
+      <aside
+        aria-label="Notifications"
+        aria-live="polite"
+        aria-atomic="true"
+        className="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-md w-full pointer-events-none px-4 sm:px-0"
+      >
         {toasts.map(t => {
           const isSuccess = t.type === 'success';
           const isError = t.type === 'error';
@@ -61,6 +66,8 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           return (
             <div
               key={t.id}
+              role={isError ? 'alert' : 'status'}
+              aria-atomic="true"
               className={`pointer-events-auto flex items-start gap-3 p-4 rounded-xl shadow-lg border backdrop-blur-sm transition-all animate-slide-in ${
                 isSuccess
                   ? 'bg-emerald-50/95 border-emerald-200 text-emerald-950'
@@ -72,10 +79,10 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
               }`}
             >
               <div className="flex-shrink-0 mt-0.5">
-                {isSuccess && <CheckCircle2 className="w-5 h-5 text-emerald-600" />}
-                {isError && <AlertCircle className="w-5 h-5 text-rose-600" />}
-                {isWarning && <AlertTriangle className="w-5 h-5 text-amber-600" />}
-                {t.type === 'info' && <Info className="w-5 h-5 text-indigo-600" />}
+                {isSuccess && <CheckCircle2 className="w-5 h-5 text-emerald-600" aria-hidden="true" />}
+                {isError && <AlertCircle className="w-5 h-5 text-rose-600" aria-hidden="true" />}
+                {isWarning && <AlertTriangle className="w-5 h-5 text-amber-600" aria-hidden="true" />}
+                {t.type === 'info' && <Info className="w-5 h-5 text-indigo-600" aria-hidden="true" />}
               </div>
 
               <div className="flex-1 text-sm">
@@ -84,15 +91,17 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
               </div>
 
               <button
+                type="button"
                 onClick={() => removeToast(t.id)}
-                className="flex-shrink-0 text-slate-400 hover:text-slate-600 p-0.5 rounded transition"
+                aria-label="Dismiss notification"
+                className="flex-shrink-0 text-slate-400 hover:text-slate-600 p-1 rounded-md hover:bg-slate-100 transition focus-visible:ring-2 focus-visible:ring-brand-500"
               >
-                <X className="w-4 h-4" />
+                <X className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
           );
         })}
-      </div>
+      </aside>
     </ToastContext.Provider>
   );
 };

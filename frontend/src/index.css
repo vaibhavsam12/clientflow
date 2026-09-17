@@ -7,6 +7,11 @@
     @apply antialiased text-slate-800 bg-slate-50 selection:bg-brand-500 selection:text-white;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
+
+  /* WCAG 2.1 AA: High-contrast focus indicator for keyboard navigation */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-600;
+  }
 }
 
 /* Custom scrollbars for clean UI */

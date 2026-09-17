@@ -27,18 +27,18 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   isLoading = false
 }) => {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="sm">
+    <Modal isOpen={isOpen} onClose={onClose} size="sm" title={title}>
       <div className="flex items-start gap-4">
         <div
           className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
             isDestructive ? 'bg-rose-100 text-rose-600' : 'bg-amber-100 text-amber-600'
           }`}
+          aria-hidden="true"
         >
           <AlertTriangle className="w-5 h-5" />
         </div>
         <div>
-          <h4 className="text-base font-semibold text-slate-900">{title}</h4>
-          <p className="mt-1 text-sm text-slate-600">{message}</p>
+          <p className="text-sm text-slate-600">{message}</p>
         </div>
       </div>
 
